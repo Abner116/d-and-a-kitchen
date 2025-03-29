@@ -15,4 +15,26 @@ router.get("/admin", authMiddleware, adminMiddleware, (req, res) => {
   res.json({ message: "Welcome Admin!" });
 });
 
+router.get(
+  "/google",
+  passport.authenticate("google", { scope: ["profile", "email"] })
+);
+// Callback route for Google to redirect to
+
+router.get(
+  "/google/callback",
+  passport.authenticate("google", {
+    failureRedirect: "/login",
+    session: false, // Disable session for JWT-based auth
+  }),
+  (req, res) => {
+    const token = jwt.sign(
+      { id: req.user._id, role: req.user.role },
+      process.env.JWT_SECRET,
+      { expiresIn: "1h" }
+    );
+    res.redirect(`${process.env.CLIENT_URL}?token=${token}`);
+  }
+);
+
 export default router;
