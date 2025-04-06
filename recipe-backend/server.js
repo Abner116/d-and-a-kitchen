@@ -6,18 +6,15 @@ import cookieParser from "cookie-parser";
 import session from "express-session";
 import passport from "passport";
 import authRoutes from "./routes/auth.routes.js";
-import "./config/passport.js"; // Import Passport configuration
+import "./config/passport.js"; 
 
 dotenv.config();
-
 const app = express();
 
-// Middleware
 app.use(express.json());
 app.use(cors({ origin: process.env.CLIENT_URL, credentials: true }));
 app.use(cookieParser());
 
-// Session for Passport
 app.use(
   session({
     secret: process.env.SESSION_SECRET,
@@ -25,16 +22,17 @@ app.use(
     saveUninitialized: false,
   })
 );
+
+
 app.use(passport.initialize());
 app.use(passport.session());
 
-// Database Connection
 mongoose
   .connect(process.env.MONGO_URI)
   .then(() => console.log("MongoDB Connected"))
   .catch((err) => console.log(err));
 
-// Routes
+
 app.use("/health", (req, res) => {
   res.json({ status: 200, message: "Server is running" });
 });
