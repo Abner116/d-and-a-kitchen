@@ -1,35 +1,43 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { ThemeProvider } from './components/ThemeProvider';
+import Navbar from './components/Navbar';
+import Footer from './components/Footer';
+import HomePage from './pages/Home';
+import RecipesPage from './pages/Recipe';
+import RecipeDetailPage from './pages/RecipeDetials';
+import LoginPage from './pages/Login';
+import SignupPage from './pages/Signup';
+import ContactPage from './pages/Contact';
+import DashboardPage from './pages/Dashboard';
+import AdminPage from './pages/Admin';
+import AuthCallbackPage from './pages/auth/Callback';
+import './styles/global.css';
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <Router>
+      <ThemeProvider defaultTheme="light" storageKey="recipe-book-theme">
+        <div className="flex min-h-screen flex-col bg-white w-full">
+          <Navbar />
+          <main className="flex-1 bg-white text-gray-800 w-full">
+            <Routes>
+              <Route path="/" element={<HomePage />} />
+              <Route path="/recipes" element={<RecipesPage />} />
+              <Route path="/recipes/:id" element={<RecipeDetailPage />} />
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/signup" element={<SignupPage />} />
+              <Route path="/contact" element={<ContactPage />} />
+              <Route path="/dashboard" element={<DashboardPage />} />
+              <Route path="/admin" element={<AdminPage />} />
+              <Route path="/auth/callback" element={<AuthCallbackPage />} />
+            </Routes>
+          </main>
+          <Footer />
+        </div>
+      </ThemeProvider>
+    </Router>
+  );
 }
 
-export default App
+export default App;

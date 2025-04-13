@@ -1,154 +1,196 @@
-"use client"
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 
-import { useState } from "react"
-import Link from "next/link"
-import { useRouter } from "next/navigation"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-import { z } from "zod"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import { useToast } from "@/hooks/use-toast"
-import { ChefHat } from "lucide-react"
+function SignupPage() {
+    const [formData, setFormData] = useState({
+        name: '',
+        email: '',
+        password: '',
+        confirmPassword: ''
+    });
+    const [errors, setErrors] = useState({});
+    const [isLoading, setIsLoading] = useState(false);
+    const navigate = useNavigate();
 
-const formSchema = z
-    .object({
-        name: z.string().min(2, { message: "Name must be at least 2 characters" }),
-        email: z.string().email({ message: "Please enter a valid email address" }),
-        password: z.string().min(6, { message: "Password must be at least 6 characters" }),
-        confirmPassword: z.string(),
-    })
-    .refine((data) => data.password === data.confirmPassword, {
-        message: "Passwords do not match",
-        path: ["confirmPassword"],
-    })
+    const validateForm = () => {
+        const newErrors = {};
 
-export default function SignupPage() {
-    const [isLoading, setIsLoading] = useState(false)
-    const router = useRouter()
-    const { toast } = useToast()
+        // Validate name
+        if (!formData.name) {
+            newErrors.name = "Name is required";
+        } else if (formData.name.length < 2) {
+            newErrors.name = "Name must be at least 2 characters";
+        }
 
-    const form = useForm < z.infer < typeof formSchema >> ({
-        resolver: zodResolver(formSchema),
-        defaultValues: {
-            name: "",
-            email: "",
-            password: "",
-            confirmPassword: "",
-        },
-    })
+        // Validate email
+        if (!formData.email) {
+            newErrors.email = "Email is required";
+        } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+            newErrors.email = "Please enter a valid email address";
+        }
 
-    async function onSubmit(values: z.infer<typeof formSchema>) {
-        setIsLoading(true)
+        // Validate password
+        if (!formData.password) {
+            newErrors.password = "Password is required";
+        } else if (formData.password.length < 6) {
+            newErrors.password = "Password must be at least 6 characters";
+        }
+
+        // Validate password confirmation
+        if (formData.password !== formData.confirmPassword) {
+            newErrors.confirmPassword = "Passwords do not match";
+        }
+
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({
+            ...prev,
+            [name]: value
+        }));
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        if (!validateForm()) return;
+
+        setIsLoading(true);
 
         try {
             // In a real app, you would call your registration API here
-            console.log("Signup values:", values)
+            console.log("Signup values:", formData);
 
             // Simulate API call
-            await new Promise((resolve) => setTimeout(resolve, 1000))
+            await new Promise(resolve => setTimeout(resolve, 1000));
 
-            toast({
-                title: "Account created",
-                description: "Your account has been created successfully.",
-            })
+            // Show success message (simplified)
+            alert("Account created successfully!");
 
             // Redirect to login
-            router.push("/login")
+            navigate("/login");
         } catch (error) {
-            toast({
-                title: "Registration failed",
-                description: "There was a problem creating your account.",
-                variant: "destructive",
-            })
+            // Show error message (simplified)
+            alert("Registration failed. Please try again.");
         } finally {
-            setIsLoading(false)
+            setIsLoading(false);
         }
-    }
+    };
 
     return (
-        <div className="container mx-auto flex h-[calc(100vh-14rem)] max-w-md items-center">
-            <Card className="w-full">
-                <CardHeader className="space-y-1">
-                    <div className="flex justify-center">
-                        <div className="rounded-full bg-primary/10 p-2">
-                            <ChefHat className="h-6 w-6 text-primary" />
+        <div className="container mx-auto py-12">
+            <div className="mx-auto max-w-md">
+                <div className="rounded-lg border bg-white p-8 shadow-sm">
+                    <div className="mb-6 text-center">
+                        <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-blue-100">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-blue-600">
+                                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="9" cy="7" r="4"></circle>
+                                <line x1="19" y1="8" x2="19" y2="14"></line>
+                                <line x1="16" y1="11" x2="22" y2="11"></line>
+                            </svg>
                         </div>
+                        <h2 className="text-2xl font-bold">Create an account</h2>
+                        <p className="text-gray-600">
+                            Enter your information to create an account
+                        </p>
                     </div>
-                    <CardTitle className="text-center text-2xl">Create an account</CardTitle>
-                    <CardDescription className="text-center">Enter your information to create an account</CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <Form {...form}>
-                        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                            <FormField
-                                control={form.control}
+
+                    <form onSubmit={handleSubmit} className="space-y-4">
+                        <div>
+                            <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+                                Name
+                            </label>
+                            <input
+                                id="name"
                                 name="name"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Name</FormLabel>
-                                        <FormControl>
-                                            <Input placeholder="John Doe" {...field} />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
+                                type="text"
+                                value={formData.name}
+                                onChange={handleChange}
+                                placeholder="John Doe"
+                                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none"
                             />
-                            <FormField
-                                control={form.control}
+                            {errors.name && (
+                                <p className="mt-1 text-sm text-red-600">{errors.name}</p>
+                            )}
+                        </div>
+
+                        <div>
+                            <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+                                Email
+                            </label>
+                            <input
+                                id="email"
                                 name="email"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Email</FormLabel>
-                                        <FormControl>
-                                            <Input placeholder="you@example.com" {...field} />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
+                                type="email"
+                                value={formData.email}
+                                onChange={handleChange}
+                                placeholder="you@example.com"
+                                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none"
                             />
-                            <FormField
-                                control={form.control}
+                            {errors.email && (
+                                <p className="mt-1 text-sm text-red-600">{errors.email}</p>
+                            )}
+                        </div>
+
+                        <div>
+                            <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+                                Password
+                            </label>
+                            <input
+                                id="password"
                                 name="password"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Password</FormLabel>
-                                        <FormControl>
-                                            <Input type="password" placeholder="••••••••" {...field} />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
+                                type="password"
+                                value={formData.password}
+                                onChange={handleChange}
+                                placeholder="••••••••"
+                                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none"
                             />
-                            <FormField
-                                control={form.control}
+                            {errors.password && (
+                                <p className="mt-1 text-sm text-red-600">{errors.password}</p>
+                            )}
+                        </div>
+
+                        <div>
+                            <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
+                                Confirm Password
+                            </label>
+                            <input
+                                id="confirmPassword"
                                 name="confirmPassword"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Confirm Password</FormLabel>
-                                        <FormControl>
-                                            <Input type="password" placeholder="••••••••" {...field} />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
+                                type="password"
+                                value={formData.confirmPassword}
+                                onChange={handleChange}
+                                placeholder="••••••••"
+                                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none"
                             />
-                            <Button type="submit" className="w-full" disabled={isLoading}>
-                                {isLoading ? "Creating account..." : "Create account"}
-                            </Button>
-                        </form>
-                    </Form>
-                </CardContent>
-                <CardFooter className="text-center text-sm">
-                    Already have an account?{" "}
-                    <Link href="/login" className="text-primary hover:underline">
-                        Login
-                    </Link>
-                </CardFooter>
-            </Card>
+                            {errors.confirmPassword && (
+                                <p className="mt-1 text-sm text-red-600">{errors.confirmPassword}</p>
+                            )}
+                        </div>
+
+                        <button
+                            type="submit"
+                            disabled={isLoading}
+                            className="w-full rounded-md bg-blue-600 py-2 px-4 text-white font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50"
+                        >
+                            {isLoading ? "Creating account..." : "Create account"}
+                        </button>
+                    </form>
+
+                    <div className="mt-4 text-center text-sm text-gray-600">
+                        Already have an account?{" "}
+                        <Link to="/login" className="font-medium text-blue-600 hover:underline">
+                            Login
+                        </Link>
+                    </div>
+                </div>
+            </div>
         </div>
-    )
+    );
 }
 
+export default SignupPage;

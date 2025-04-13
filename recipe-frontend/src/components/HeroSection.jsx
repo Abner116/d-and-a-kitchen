@@ -1,7 +1,8 @@
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { Button } from './ui/button';
 
-export function HeroSection() {
+function HeroSection() {
     return (
         <section className="relative bg-gradient-to-b from-primary/10 to-background py-16 md:py-24">
             <div className="container mx-auto px-4 md:px-6">
@@ -12,17 +13,16 @@ export function HeroSection() {
                                 Discover Delicious Recipes for Every Occasion
                             </h1>
                             <p className="max-w-[600px] text-muted-foreground md:text-xl">
-                                Find, save, and share your favorite recipes from around the world. Join our community of food lovers
-                                today.
+                                Find, save, and share your favorite recipes from around the world. Join our community of food lovers today.
                             </p>
                         </div>
                         <div className="flex flex-col gap-2 min-[400px]:flex-row">
-                            <Link href="/recipes">
+                            <Link to="/recipes">
                                 <Button size="lg" className="px-8">
                                     Explore Recipes
                                 </Button>
                             </Link>
-                            <Link href="/signup">
+                            <Link to="/signup">
                                 <Button size="lg" variant="outline" className="px-8">
                                     Join Now
                                 </Button>
@@ -74,6 +74,7 @@ export function HeroSection() {
                 </div>
             </div>
         </section>
-    )
+    );
 }
 
+export default HeroSection;
