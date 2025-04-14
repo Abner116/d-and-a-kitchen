@@ -16,7 +16,7 @@ function HeroSection() {
                                 Find, save, and share your favorite recipes from around the world. Join our community of food lovers today.
                             </p>
                         </div>
-                        <div className="flex flex-col gap-2 min-[400px]:flex-row">
+                        <div className="flex flex-col gap-2 min-[400px]:flex-row justify-center">
                             <Link to="/recipes">
                                 <Button size="lg" className="px-8">
                                     Explore Recipes
@@ -33,7 +33,7 @@ function HeroSection() {
                         <div className="grid gap-4 md:gap-6">
                             <div className="overflow-hidden rounded-xl">
                                 <img
-                                    src="/placeholder.svg?height=400&width=300"
+                                    src="https://www.foodiesfeed.com/wp-content/uploads/2023/06/burger-with-melted-cheese.jpg"
                                     width={300}
                                     height={400}
                                     alt="Delicious pasta dish"
@@ -42,7 +42,7 @@ function HeroSection() {
                             </div>
                             <div className="overflow-hidden rounded-xl">
                                 <img
-                                    src="/placeholder.svg?height=300&width=300"
+                                    src="https://www.foodiesfeed.com/wp-content/uploads/2023/06/coffee-crema.jpg"
                                     width={300}
                                     height={300}
                                     alt="Fresh salad"
@@ -53,7 +53,7 @@ function HeroSection() {
                         <div className="grid gap-4 md:gap-6">
                             <div className="overflow-hidden rounded-xl">
                                 <img
-                                    src="/placeholder.svg?height=300&width=300"
+                                    src="https://www.foodiesfeed.com/wp-content/uploads/2023/08/sushi-roll-macro.jpg"
                                     width={300}
                                     height={300}
                                     alt="Homemade bread"
@@ -62,7 +62,7 @@ function HeroSection() {
                             </div>
                             <div className="overflow-hidden rounded-xl">
                                 <img
-                                    src="/placeholder.svg?height=400&width=300"
+                                    src="https://www.foodiesfeed.com/wp-content/uploads/ff-images/2024/12/refreshing-lemon-cheesecake-slice-with-mint-garnish.jpg"
                                     width={300}
                                     height={400}
                                     alt="Chocolate dessert"

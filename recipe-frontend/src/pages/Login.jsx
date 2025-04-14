@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 
 function LoginPage() {
     const [formData, setFormData] = useState({
@@ -8,7 +9,9 @@ function LoginPage() {
     });
     const [errors, setErrors] = useState({});
     const [isLoading, setIsLoading] = useState(false);
+    const [apiError, setApiError] = useState(null);
     const navigate = useNavigate();
+    const { login } = useAuth();
 
     const validateForm = () => {
         const newErrors = {};
@@ -23,8 +26,6 @@ function LoginPage() {
         // Validate password
         if (!formData.password) {
             newErrors.password = "Password is required";
-        } else if (formData.password.length < 6) {
-            newErrors.password = "Password must be at least 6 characters";
         }
 
         setErrors(newErrors);
@@ -41,33 +42,31 @@ function LoginPage() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setApiError(null);
 
         if (!validateForm()) return;
 
         setIsLoading(true);
 
         try {
-            // In a real app, you would call your authentication API here
-            console.log("Login values:", formData);
+            const result = await login(formData);
 
-            // Simulate API call
-            await new Promise(resolve => setTimeout(resolve, 1000));
+            if (result.success) {
+                // Show success message
+                alert("Login successful! Welcome back!");
 
-            // For demo purposes, let's check if it's an admin account
-            const isAdmin = formData.email.includes('admin');
-
-            // Show toast message (simplified)
-            alert("Login successful! Welcome back!");
-
-            // Redirect to appropriate dashboard
-            if (isAdmin) {
-                navigate("/admin");
+                // Redirect based on role
+                if (result.user?.role === "admin") {
+                    navigate("/admin");
+                } else {
+                    navigate("/dashboard");
+                }
             } else {
-                navigate("/dashboard");
+                setApiError(result.error || "Login failed. Please check your credentials.");
             }
         } catch (error) {
-            // Show error toast (simplified)
-            alert("Login failed. Please check your credentials and try again.");
+            setApiError("An unexpected error occurred. Please try again.");
+            console.error("Login error:", error);
         } finally {
             setIsLoading(false);
         }
@@ -75,7 +74,7 @@ function LoginPage() {
 
     const handleGoogleLogin = () => {
         // In a real app, this would redirect to your backend's Google auth route
-        window.location.href = `${process.env.REACT_APP_API_URL || 'http://localhost:5000/api'}/auth/google`;
+        window.location.href = `${import.meta.env.VITE_API_URL || 'http://localhost:8080/api'}/auth/google`;
     };
 
     return (
@@ -83,8 +82,8 @@ function LoginPage() {
             <div className="mx-auto max-w-md">
                 <div className="rounded-lg border bg-white p-8 shadow-sm">
                     <div className="mb-6 text-center">
-                        <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-blue-100">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-blue-600">
+                        <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-orange-100">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-orange-600">
                                 <path d="M6 13.87A4 4 0 0 1 7.41 6a5.11 5.11 0 0 1 1.05-1.54 5 5 0 0 1 7.08 0A5.11 5.11 0 0 1 16.59 6 4 4 0 0 1 18 13.87V21H6Z"></path>
                                 <line x1="6" y1="17" x2="18" y2="17"></line>
                             </svg>
@@ -95,8 +94,14 @@ function LoginPage() {
                         </p>
                     </div>
 
+                    {apiError && (
+                        <div className="mb-4 p-3 bg-red-50 text-red-700 border border-red-200 rounded-md">
+                            {apiError}
+                        </div>
+                    )}
+
                     {/* Google SSO Button */}
-                    <button
+                    {/* <button
                         className="mb-4 flex w-full items-center justify-center gap-2 rounded-md border border-gray-300 bg-white px-4 py-2 text-gray-700 hover:bg-gray-50"
                         onClick={handleGoogleLogin}
                         type="button"
@@ -110,8 +115,8 @@ function LoginPage() {
                             </g>
                         </svg>
                         Continue with Google
-                    </button>
-
+                    </button> */}
+{/* 
                     <div className="relative my-4">
                         <div className="absolute inset-0 flex items-center">
                             <div className="w-full border-t border-gray-300"></div>
@@ -121,7 +126,7 @@ function LoginPage() {
                                 Or continue with
                             </span>
                         </div>
-                    </div>
+                    </div> */}
 
                     <form onSubmit={handleSubmit} className="space-y-4">
                         <div>
@@ -135,7 +140,7 @@ function LoginPage() {
                                 value={formData.email}
                                 onChange={handleChange}
                                 placeholder="you@example.com"
-                                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none"
+                                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500"
                             />
                             {errors.email && (
                                 <p className="mt-1 text-sm text-red-600">{errors.email}</p>
@@ -153,7 +158,7 @@ function LoginPage() {
                                 value={formData.password}
                                 onChange={handleChange}
                                 placeholder="••••••••"
-                                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none"
+                                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500"
                             />
                             {errors.password && (
                                 <p className="mt-1 text-sm text-red-600">{errors.password}</p>
@@ -163,21 +168,21 @@ function LoginPage() {
                         <button
                             type="submit"
                             disabled={isLoading}
-                            className="w-full rounded-md bg-blue-600 py-2 px-4 text-white font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50"
+                            className="w-full rounded-md bg-orange-500 py-2 px-4 text-white font-medium hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 disabled:opacity-50"
                         >
                             {isLoading ? "Logging in..." : "Login"}
                         </button>
                     </form>
 
                     <div className="mt-4 text-center">
-                        <Link to="/forgot-password" className="text-sm text-blue-600 hover:underline">
+                        <Link to="/forgot-password" className="text-sm text-orange-600 hover:underline">
                             Forgot your password?
                         </Link>
                     </div>
 
                     <div className="mt-4 text-center text-sm text-gray-600">
                         Don't have an account?{" "}
-                        <Link to="/signup" className="font-medium text-blue-600 hover:underline">
+                        <Link to="/signup" className="font-medium text-orange-600 hover:underline">
                             Sign up
                         </Link>
                     </div>

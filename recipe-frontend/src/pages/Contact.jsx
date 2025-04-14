@@ -38,34 +38,22 @@ function ContactPage() {
 
             <div className="space-y-4">
               <div className="flex items-start">
-                <div className="mr-3 flex h-10 w-10 items-center justify-center rounded-full bg-blue-100">
-                  <span className="text-blue-600">✉️</span>
+                <div className="mr-3 flex h-10 w-10 items-center justify-center rounded-full bg-orange-100">
+                  <span className="text-orange-600">✉️</span>
                 </div>
                 <div>
                   <h3 className="font-medium">Email</h3>
-                  <p className="text-sm text-gray-600">contact@recipebook.com</p>
+                  <p className="text-sm text-gray-600">abnerdsouza2005@recipebook.com</p>
                 </div>
               </div>
 
               <div className="flex items-start">
-                <div className="mr-3 flex h-10 w-10 items-center justify-center rounded-full bg-blue-100">
-                  <span className="text-blue-600">📞</span>
+                <div className="mr-3 flex h-10 w-10 items-center justify-center rounded-full bg-orange-100">
+                  <span className="text-orange-600">📞</span>
                 </div>
                 <div>
                   <h3 className="font-medium">Phone</h3>
-                  <p className="text-sm text-gray-600">+1 (555) 123-4567</p>
-                </div>
-              </div>
-
-              <div className="flex items-start">
-                <div className="mr-3 flex h-10 w-10 items-center justify-center rounded-full bg-blue-100">
-                  <span className="text-blue-600">📍</span>
-                </div>
-                <div>
-                  <h3 className="font-medium">Address</h3>
-                  <p className="text-sm text-gray-600">
-                    123 Recipe Street, Foodville, CA 94123
-                  </p>
+                  <p className="text-sm text-gray-600">+91 982214762</p>
                 </div>
               </div>
             </div>
@@ -86,7 +74,7 @@ function ContactPage() {
                   name="name"
                   placeholder="Your name"
                   required
-                  className="w-full px-3 py-2 border rounded-md"
+                  className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
                 />
                 <ValidationError prefix="Name" field="name" errors={formspreeState.errors} />
               </div>
@@ -101,7 +89,7 @@ function ContactPage() {
                   name="email"
                   placeholder="your.email@example.com"
                   required
-                  className="w-full px-3 py-2 border rounded-md"
+                  className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
                 />
                 <ValidationError prefix="Email" field="email" errors={formspreeState.errors} />
               </div>
@@ -116,7 +104,7 @@ function ContactPage() {
                   name="subject"
                   placeholder="How can we help you?"
                   required
-                  className="w-full px-3 py-2 border rounded-md"
+                  className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
                 />
                 <ValidationError prefix="Subject" field="subject" errors={formspreeState.errors} />
               </div>
@@ -131,7 +119,7 @@ function ContactPage() {
                   placeholder="Tell us more about your inquiry..."
                   rows="4"
                   required
-                  className="w-full px-3 py-2 border rounded-md"
+                  className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
                 />
                 <ValidationError prefix="Message" field="message" errors={formspreeState.errors} />
               </div>
@@ -139,7 +127,7 @@ function ContactPage() {
               <button
                 type="submit"
                 disabled={formspreeState.submitting}
-                className="w-full bg-blue-600 text-white font-medium py-2 px-4 rounded-md hover:bg-blue-700 transition-colors"
+                className="w-full bg-orange-500 text-white font-medium py-2 px-4 rounded-md hover:bg-orange-600 transition-colors"
               >
                 {formspreeState.submitting ? "Sending..." : "Send Message"}
               </button>

@@ -1,16 +1,20 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 
 function SignupPage() {
     const [formData, setFormData] = useState({
         name: '',
         email: '',
         password: '',
-        confirmPassword: ''
+        confirmPassword: '',
+        role: 'client' // Default role is client
     });
     const [errors, setErrors] = useState({});
     const [isLoading, setIsLoading] = useState(false);
+    const [apiError, setApiError] = useState(null);
     const navigate = useNavigate();
+    const { signup } = useAuth();
 
     const validateForm = () => {
         const newErrors = {};
@@ -55,26 +59,27 @@ function SignupPage() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setApiError(null);
 
         if (!validateForm()) return;
 
         setIsLoading(true);
 
         try {
-            // In a real app, you would call your registration API here
-            console.log("Signup values:", formData);
+            const result = await signup(formData);
 
-            // Simulate API call
-            await new Promise(resolve => setTimeout(resolve, 1000));
+            if (result.success) {
+                // Show success message
+                alert("Account created successfully! Please login.");
 
-            // Show success message (simplified)
-            alert("Account created successfully!");
-
-            // Redirect to login
-            navigate("/login");
+                // Redirect to login
+                navigate("/login");
+            } else {
+                setApiError(result.error || "Registration failed. Please try again.");
+            }
         } catch (error) {
-            // Show error message (simplified)
-            alert("Registration failed. Please try again.");
+            setApiError("An unexpected error occurred. Please try again.");
+            console.error("Signup error:", error);
         } finally {
             setIsLoading(false);
         }
@@ -85,8 +90,8 @@ function SignupPage() {
             <div className="mx-auto max-w-md">
                 <div className="rounded-lg border bg-white p-8 shadow-sm">
                     <div className="mb-6 text-center">
-                        <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-blue-100">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-blue-600">
+                        <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-orange-100">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-orange-600">
                                 <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
                                 <circle cx="9" cy="7" r="4"></circle>
                                 <line x1="19" y1="8" x2="19" y2="14"></line>
@@ -98,6 +103,12 @@ function SignupPage() {
                             Enter your information to create an account
                         </p>
                     </div>
+
+                    {apiError && (
+                        <div className="mb-4 p-3 bg-red-50 text-red-700 border border-red-200 rounded-md">
+                            {apiError}
+                        </div>
+                    )}
 
                     <form onSubmit={handleSubmit} className="space-y-4">
                         <div>
@@ -111,7 +122,7 @@ function SignupPage() {
                                 value={formData.name}
                                 onChange={handleChange}
                                 placeholder="John Doe"
-                                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none"
+                                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500"
                             />
                             {errors.name && (
                                 <p className="mt-1 text-sm text-red-600">{errors.name}</p>
@@ -129,11 +140,49 @@ function SignupPage() {
                                 value={formData.email}
                                 onChange={handleChange}
                                 placeholder="you@example.com"
-                                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none"
+                                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500"
                             />
                             {errors.email && (
                                 <p className="mt-1 text-sm text-red-600">{errors.email}</p>
                             )}
+                        </div>
+
+                        <div>
+                            <label htmlFor="role" className="block text-sm font-medium text-gray-700 flex justify-center">
+                                Account Type
+                            </label>
+                            <div className="mt-1">
+                                <div className="flex items-center space-x-4 justify-center pt-4">
+                                    <div className="flex items-center">
+                                        <input
+                                            id="role-client"
+                                            name="role"
+                                            type="radio"
+                                            value="client"
+                                            checked={formData.role === "client"}
+                                            onChange={handleChange}
+                                            className="h-4 w-4 text-orange-500 focus:ring-orange-500 border-gray-300"
+                                        />
+                                        <label htmlFor="role-client" className="ml-2 block text-sm text-gray-700">
+                                            Client
+                                        </label>
+                                    </div>
+                                    <div className="flex items-center">
+                                        <input
+                                            id="role-admin"
+                                            name="role"
+                                            type="radio"
+                                            value="admin"
+                                            checked={formData.role === "admin"}
+                                            onChange={handleChange}
+                                            className="h-4 w-4 text-orange-500 focus:ring-orange-500 border-gray-300"
+                                        />
+                                        <label htmlFor="role-admin" className="ml-2 block text-sm text-gray-700">
+                                            Admin
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
                         <div>
@@ -147,7 +196,7 @@ function SignupPage() {
                                 value={formData.password}
                                 onChange={handleChange}
                                 placeholder="••••••••"
-                                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none"
+                                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500"
                             />
                             {errors.password && (
                                 <p className="mt-1 text-sm text-red-600">{errors.password}</p>
@@ -165,7 +214,7 @@ function SignupPage() {
                                 value={formData.confirmPassword}
                                 onChange={handleChange}
                                 placeholder="••••••••"
-                                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none"
+                                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500"
                             />
                             {errors.confirmPassword && (
                                 <p className="mt-1 text-sm text-red-600">{errors.confirmPassword}</p>
@@ -175,7 +224,7 @@ function SignupPage() {
                         <button
                             type="submit"
                             disabled={isLoading}
-                            className="w-full rounded-md bg-blue-600 py-2 px-4 text-white font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50"
+                            className="w-full rounded-md bg-orange-500 py-2 px-4 text-white font-medium hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 disabled:opacity-50"
                         >
                             {isLoading ? "Creating account..." : "Create account"}
                         </button>
@@ -183,13 +232,13 @@ function SignupPage() {
 
                     <div className="mt-4 text-center text-sm text-gray-600">
                         Already have an account?{" "}
-                        <Link to="/login" className="font-medium text-blue-600 hover:underline">
+                        <Link to="/login" className="font-medium text-orange-600 hover:underline">
                             Login
                         </Link>
                     </div>
                 </div>
-            </div>
-        </div>
+            </div >
+        </div >
     );
 }
 

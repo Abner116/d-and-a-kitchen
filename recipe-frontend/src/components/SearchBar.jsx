@@ -22,7 +22,7 @@ function SearchBar() {
     };
 
     return (
-        <div className="mb-8 rounded-lg border bg-white p-4 shadow-sm dark:bg-gray-800">
+        <div className="mb-8 rounded-lg border bg-white p-4 shadow-sm">
             <form onSubmit={handleSearch} className="flex flex-col gap-4 md:flex-row">
                 <div className="relative flex-1">
                     <svg
@@ -43,7 +43,7 @@ function SearchBar() {
                     <input
                         type="search"
                         placeholder="Search recipes..."
-                        className="w-full rounded-md border border-gray-300 px-3 py-2 pl-9 focus:border-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                        className="w-full rounded-md border border-gray-300 px-3 py-2 pl-9 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
@@ -53,7 +53,7 @@ function SearchBar() {
                     <select
                         value={cuisine}
                         onChange={(e) => setCuisine(e.target.value)}
-                        className="h-10 w-full appearance-none rounded-md border border-gray-300 bg-white px-3 py-2 pr-8 focus:border-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white md:w-[180px]"
+                        className="h-10 w-full appearance-none rounded-md border border-gray-300 bg-white px-3 py-2 pr-8 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 md:w-[180px]"
                     >
                         <option value="all">All Cuisines</option>
                         <option value="italian">Italian</option>
@@ -84,7 +84,7 @@ function SearchBar() {
 
                 <button
                     type="submit"
-                    className="rounded-md bg-blue-600 px-4 py-2 font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 md:w-[100px]"
+                    className="rounded-md bg-orange-500 px-4 py-2 font-medium text-white hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 transition-colors md:w-[100px]"
                 >
                     Search
                 </button>
